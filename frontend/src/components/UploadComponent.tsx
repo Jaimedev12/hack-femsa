@@ -1,16 +1,35 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { CircularProgress } from '@mui/material';
-import type { BoundingBox } from './ResultsComponent';
 
 interface UploadComponentProps {
   onComplete?: (result: any) => void;
 }
 
-interface ModelResult {
-  alertBoxes: BoundingBox[];
-  totalBoxes: number;
+export interface ModelResult {
+  id: number;
+  nombre: string;
+  bbox: number[];
+  alerta: string;
 }
+
+/*
+
+[
+     {
+    "id": 43,
+    "nombre": "Papel Regio Rinde 4pz",
+    "bbox": [239.92279052734375, 2690.970703125, 721.9126586914062, 3151.9345703125] 
+  },
+  {
+    "id": 47,
+    "nombre": "Shampoo KleenBebe Manzanilla 250ml",
+
+    "bbox": [296.0941467285156, 1279.9599609375, 423.6428527832031, 1696.7999267578125] 
+  } 
+]
+
+*/
 
 const UploadComponent: React.FC<UploadComponentProps> = ({ onComplete }) => {
   const [image, setImage] = useState<File | null>(null);
@@ -20,15 +39,7 @@ const UploadComponent: React.FC<UploadComponentProps> = ({ onComplete }) => {
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      if (!['image/jpeg', 'image/png'].includes(file.type)) {
-        setError('Porfavor selecciona una imagen JPEG o PNG.');
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) { // 5MB
-        setError('La imagen es demasiado grande (máx. 5MB).');
-        return;
-      }
-      
+
       setImage(file);
       setError(null);
       
@@ -51,22 +62,32 @@ const UploadComponent: React.FC<UploadComponentProps> = ({ onComplete }) => {
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate a delay for loading
       setLoading(false);
 
-      const fakeResponse: ModelResult = {
-        alertBoxes: [
-          { id: "0000001", x1: 0, y1: 0, x2: 20, y2: 20, alert: "Alerta 1" },
-          { id: "0000002", x1: 50, y1: 50, x2: 70, y2: 70, alert: "Alerta 2" },
-        ],
-        totalBoxes: 8,
-      }
+      const fakeResponse: ModelResult[] = [
+        {
+          id: 1,
+          nombre: "Papel Regio Rinde 4pz",
+          bbox: [30, 30, 60, 60],
+          alerta: "Producto mal acomodado"
+        },
+        {
+          id: 2,
+          nombre: "Shampoo KleenBebe Manzanilla 250ml",
+          bbox: [80, 80, 110, 110],
+          alerta: "Producto faltante"
+        },
+        {
+          id: 3,
+          nombre: "Shampoo KleenBebe Manzanilla 250ml",
+          bbox: [130, 130, 160, 160],
+          alerta: "Producto correcto"
+        }
+      ];
 
       // Call the callback with the result and the image
       if (onComplete) {
         onComplete({
           // result: response.data,
-          result: {
-            alertBoxes: fakeResponse.alertBoxes,
-            totalBoxes: fakeResponse.totalBoxes,
-          },
+          result: fakeResponse,
           image: fileToUpload
         });
       }
