@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { ThemeProvider, CssBaseline, AppBar, Toolbar, Typography } from '@mui/material';
+import { ThemeProvider, CssBaseline, Box } from '@mui/material';
 import theme from './theme';
 import MapComponent from './components/MapComponent';
 import UploadComponent from './components/UploadComponent';
 import ResultsComponent from './components/ResultsComponent';
+import Sidebar from './components/Sidebar';
 import type { ModelResult } from './components/UploadComponent';
 
 const App: React.FC = () => {
@@ -45,28 +46,22 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+        {/* Sidebar Component - no drawerWidth prop needed */}
+        <Sidebar 
+          currentView={view}
+          onNavigate={setView}
+        />
         
-        <AppBar position="static" sx={{ minHeight: '10%' }}>
-          <Toolbar>
-            <img 
-              src="src/assets/oxxo_Logo.png" 
-              alt="OXXO Logo" 
-              style={{ height: '32px', marginRight: '12px' }} 
-            />
-            <Typography variant="h6">
-              Store Analysis Dashboard
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        
-        <div style={{  
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '90%',
-          flex: 1,
-        }}>
+        {/* Main content area */}
+        <Box 
+          sx={{ 
+            flexGrow: 1,
+            height: '100vh',
+            overflow: 'auto',
+            bgcolor: theme.palette.background.default
+          }}
+        >
           {view === 'map' && (
             <MapComponent 
               setAppView={setView}
@@ -86,8 +81,8 @@ const App: React.FC = () => {
               onBackToMap={handleBackToMap}
             />
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
     </ThemeProvider>
   );
 };
