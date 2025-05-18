@@ -10,20 +10,30 @@ import {
   Paper,
   Typography,
   Box,
-  CircularProgress
+  CircularProgress,
+  Divider
 } from '@mui/material';
+import MapIcon from '@mui/icons-material/Map';
 import type { ModelResult } from './UploadComponent';
 
 interface AlertListProps {
   results: ModelResult[];
   onAlertUpdate: (id: number, newAlertStatus: string) => void;
+  onBackToMap: () => void;
+  segment: string;
   stats: {
     total: number;
     good: number;
     percentage: number;
   };
 }
-const AlertList: React.FC<AlertListProps> = ({ results, onAlertUpdate, stats }) => {
+const AlertList: React.FC<AlertListProps> = ({ 
+  results, 
+  onAlertUpdate, 
+  onBackToMap,
+  segment, 
+  stats 
+}) => {
   // State to track which popover is open
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [activeItemId, setActiveItemId] = useState<number | null>(null);
@@ -78,8 +88,15 @@ const AlertList: React.FC<AlertListProps> = ({ results, onAlertUpdate, stats }) 
       height: '100%',
       overflow: 'auto',
       padding: '20px',
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column'
     }}>
+
+      <Typography variant="h5" component="h1" sx={{ mb: 2 }}>
+        Segmento: {segment}
+      </Typography>
+
       {/* Stats Box */}
       <Paper 
         elevation={3} 
@@ -261,6 +278,20 @@ const AlertList: React.FC<AlertListProps> = ({ results, onAlertUpdate, stats }) 
           )}
         </Paper>
       </Popover>
+      <Divider sx={{ my: 2 }} />
+      <Box sx={{ mt: 'auto', pt: 2 }}>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          fullWidth
+          size="large"
+          startIcon={<MapIcon />}
+          onClick={onBackToMap}
+          sx={{ py: 1.5 }}
+        >
+          Volver al mapa ({stats.percentage}% completado)
+        </Button>
+      </Box>
     </div>
   );
 };

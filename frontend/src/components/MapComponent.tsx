@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Modal, Box, Typography } from '@mui/material';
 import UploadComponent from './UploadComponent';
 
-// Define the grid configuration
 interface GridCell {
   segmentId: string | null;
   width: number;
@@ -13,16 +12,25 @@ interface MapComponentProps {
   setAppView: (view: 'map' | 'upload' | 'loading' | 'results') => void;
   setImage: (image: File | null) => void; 
   setApiResult: (result: any) => void;
+  selectedSegment: string | null;
+  setSelectedSegment: (segment: string) => void;
+  segmentStatus: Record<string, { percentage: number, color: string }>;
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({ setAppView, setImage, setApiResult }) => {
+const MapComponent: React.FC<MapComponentProps> = ({ 
+  setAppView, 
+  setImage, 
+  setApiResult, 
+  setSelectedSegment,
+  segmentStatus,
+  selectedSegment
+}) => {
   // Grid configuration
   const cellWidth = 70;
   const cellHeight = 70;
   const gridGap = 0;
 
   // Define your store layout as a matrix
-  // null represents empty space, string values represent segment IDs
   const storeLayout: (string | null)[][] = [
     ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
     ['x', null, null, null, null, null, null, null, 'x'],
@@ -32,21 +40,13 @@ const MapComponent: React.FC<MapComponentProps> = ({ setAppView, setImage, setAp
     ['x', null, 'x', 'x', null, 'x', 'x', null, null],
   ];
 
-  // Calculate SVG dimensions based on grid size
   const svgWidth = storeLayout[0].length * (cellWidth + gridGap);
   const svgHeight = storeLayout.length * (cellHeight + gridGap);
 
-  const [segmentColors, setSegmentColors] = useState<Record<string, string>>({});
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedSegment, setSelectedSegment] = useState<string | null>(null);
 
   const handleSegmentClick = (segmentId: string) => {
-    // setSegmentColors((prev) => ({
-    //   ...prev,
-    //   [segmentId]: prev[segmentId] === 'red' ? 'lightblue' : 'red',
-    // }));
-    
-    // // Open modal and set selected segment
+    // Set selected segment
     setSelectedSegment(segmentId);
     setModalOpen(true);
   };
@@ -56,16 +56,10 @@ const MapComponent: React.FC<MapComponentProps> = ({ setAppView, setImage, setAp
   };
 
   const handleUploadComplete = ({ result, image }: { result: any, image: File }) => {
-    // Close the modal
     setModalOpen(false);
-    
-    // Set state in the parent App component
     setImage(image);
     setApiResult(result);
     setAppView('results');
-    
-    console.log('Upload complete:', result);
-    console.log('Image:', image);
   };
 
   const modalStyle = {
@@ -87,13 +81,16 @@ const MapComponent: React.FC<MapComponentProps> = ({ setAppView, setImage, setAp
         minHeight: '100%',
         display: 'flex',
         justifyContent: 'center',
-        overflow: 'auto', // Add scrolling if necessary
+        overflow: 'auto',
       }}
     >
       <svg width={svgWidth} height={svgHeight}>
         {storeLayout.map((row, rowIndex) => 
           row.map((cell, colIndex) => {
             if (cell === null) return null; // Skip empty cells
+            
+            // Get segment color if available, otherwise use default
+            const cellColor = segmentStatus[cell]?.color || 'lightgray';
             
             return (
               <rect
@@ -102,7 +99,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ setAppView, setImage, setAp
                 y={rowIndex * (cellHeight + gridGap)}
                 width={cellWidth}
                 height={cellHeight}
-                fill={segmentColors[cell] || 'lightgray'}
+                fill={cellColor}
                 stroke="#333"
                 strokeWidth="1"
                 onClick={() => handleSegmentClick(cell)}
@@ -120,7 +117,9 @@ const MapComponent: React.FC<MapComponentProps> = ({ setAppView, setImage, setAp
       >
         <Box sx={modalStyle}>
           <Typography id="segment-modal-title" variant="h6" component="h2" mb={2}>
-            Nombre del segmento: {selectedSegment}
+            Nombre del segmento: {segmentStatus[selectedSegment || '']?.percentage 
+              ? `${selectedSegment} (${segmentStatus[selectedSegment || ''].percentage}% completado)` 
+              : selectedSegment}
           </Typography>
           <UploadComponent onComplete={handleUploadComplete} />
         </Box>

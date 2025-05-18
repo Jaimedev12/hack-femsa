@@ -3,7 +3,19 @@ import AlertList from './AlertList';
 import MarkedImageComponent from './MarkedImageComponent';
 import type { ModelResult } from './UploadComponent';
 
-const ResultsComponent: React.FC<{ imageSrc: string; results: ModelResult[] }> = ({ imageSrc, results: initialResults }) => {
+interface ResultsComponentProps {
+  imageSrc: string;
+  results: ModelResult[];
+  segment: string;
+  onBackToMap: (segment: string, percentage: number) => void;
+}
+
+const ResultsComponent: React.FC<ResultsComponentProps> = ({ 
+  imageSrc, 
+  results: initialResults,
+  segment,
+  onBackToMap
+}) => {
   // Maintain results as component state so we can update it
   const [results, setResults] = useState<ModelResult[]>(initialResults);
   
@@ -25,6 +37,11 @@ const ResultsComponent: React.FC<{ imageSrc: string; results: ModelResult[] }> =
     );
   };
   
+  // Handle navigation back to map
+  const handleBackToMap = () => {
+    onBackToMap(segment, donePercentage);
+  };
+  
   return (
     <div style={{ 
       display: 'flex', 
@@ -39,6 +56,8 @@ const ResultsComponent: React.FC<{ imageSrc: string; results: ModelResult[] }> =
       <AlertList 
         results={filteredAlerts} 
         onAlertUpdate={handleAlertUpdate}
+        onBackToMap={handleBackToMap}
+        segment={segment}
         stats={{
           total: totalAlerts,
           good: goodAlerts,
