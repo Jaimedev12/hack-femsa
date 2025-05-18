@@ -1,28 +1,16 @@
 import React, { useState } from 'react';
-import { 
-  Button, 
-  Popover, 
-  List, 
-  ListItem, 
-  ListItemButton,
-  ListItemText,
-  TextField,
-  Paper,
-  Typography,
-  Box,
-  CircularProgress,
-  Divider,
-  Stack
-} from '@mui/material';
-import MapIcon from '@mui/icons-material/Map';
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import { Button, Typography, Paper } from '@mui/material';
 import type { ModelResult } from './UploadComponent';
+import StatsDisplay from './StatsDisplay';
+import ActionButtons from './ActionButtons';
+import OmitReasonPopover from './OmitReasonPopover';
+import AlertItem from './AlertItem';
 
 interface AlertListProps {
   results: ModelResult[];
   onAlertUpdate: (id: number, newAlertStatus: string) => void;
   onBackToMap: () => void;
-  onTakeNewPicture: () => void;  // New prop for handling new picture
+  onTakeNewPicture: () => void;
   segment: string;
   stats: {
     total: number;
@@ -31,287 +19,98 @@ interface AlertListProps {
   };
 }
 
-const AlertList: React.FC<AlertListProps> = ({ 
-  results, 
-  onAlertUpdate, 
+const AlertList: React.FC<AlertListProps> = ({
+  results,
+  onAlertUpdate,
   onBackToMap,
-  onTakeNewPicture,  // Add the new handler
-  segment, 
-  stats 
+  onTakeNewPicture,
+  segment,
+  stats
 }) => {
-  // State to track which popover is open
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [activeItemId, setActiveItemId] = useState<number | null>(null);
-  const [otherReason, setOtherReason] = useState<string>('');
-  const [showOtherInput, setShowOtherInput] = useState<boolean>(false);
+  const [selectedAlertId, setSelectedAlertId] = useState<number | null>(null);
 
-  // Handle opening the popover
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>, itemId: number) => {
+  const handleOmitClick = (event: React.MouseEvent<HTMLButtonElement>, id: number) => {
     setAnchorEl(event.currentTarget);
-    setActiveItemId(itemId);
-    setShowOtherInput(false);
+    setSelectedAlertId(id);
   };
 
-  // Handle closing the popover
-  const handleClose = () => {
+  const handleClosePopover = () => {
     setAnchorEl(null);
-    setActiveItemId(null);
-    setOtherReason('');
+    setSelectedAlertId(null);
   };
 
-  // Handle selecting an option
-  const handleOptionSelect = (option: string) => {
-    if (option === 'Otro') {
-      setShowOtherInput(true);
-    } else {
-      // Find the original alert text for the active item
-      const activeItem = results.find(res => res.id === activeItemId);
-      if (activeItem) {
-        console.log(`Alert ${activeItemId} ignored with reason: ${option}`);
-        onAlertUpdate(activeItemId!, `Omitido: ${option} - [${activeItem.alerta}]`);
+  const handleSelectReason = (reason: string) => {
+    if (selectedAlertId !== null) {
+      // Find the original alert text to preserve in the omit message
+      const alert = results.find(r => r.id === selectedAlertId);
+      if (alert) {
+        onAlertUpdate(selectedAlertId, `Omitido: ${reason} - [${alert.alerta}]`);
       }
-      handleClose();
     }
+    handleClosePopover();
   };
-
-  // Handle submitting the other reason
-  const handleOtherReasonSubmit = () => {
-    // Find the original alert text for the active item
-    const activeItem = results.find(res => res.id === activeItemId);
-    if (activeItem) {
-      console.log(`Alert ${activeItemId} ignored with reason: ${otherReason}`);
-      onAlertUpdate(activeItemId!, `Omitido: ${otherReason} - [${activeItem.alerta}]`);
-    }
-    handleClose();
-  };
-
-  const open = Boolean(anchorEl);
 
   return (
-    <div style={{ 
-      width: '50vw',
-      height: '100%',
-      overflow: 'auto',
-      padding: '20px',
+    <Paper elevation={3} sx={{ 
+      width: '50vw', 
+      height: '100%', 
+      p: 3, 
       boxSizing: 'border-box',
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      overflow: 'hidden'
     }}>
-
-      <Typography variant="h5" component="h1" sx={{ mb: 2 }}>
+      <Typography variant="h5" gutterBottom>
         Segmento: {segment}
       </Typography>
-
-      {/* Stats Box */}
-      <Paper 
-        elevation={3} 
-        sx={{ 
-          p: 2, 
-          mb: 3, 
-          display: 'flex', 
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          borderRadius: 2
-        }}
-      >
-        <div>
-          <Typography variant="h6" sx={{ mb: 1 }}>Resumen de productos</Typography>
-          <Typography variant="body2">
-            Total: <strong>{stats.total}</strong> | Alertas: <strong>{stats.total - stats.good}</strong>
-          </Typography>
-        </div>
-        <Box position="relative" display="inline-flex">
-          <CircularProgress
-            variant="determinate"
-            value={stats.percentage}
-            size={100}
-            thickness={5}
-            sx={{
-              color: stats.percentage < 40 ? '#f44336' : 
-              stats.percentage < 70 ? '#ff9800' : 
-              '#4caf50',
-            }}
-          />
-          <Box
-            sx={{
-              top: 0,
-              left: 0,
-              bottom: 0,
-              right: 0,
-              position: 'absolute',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: 'column'
-            }}
-          >
-            <Typography variant="h5" component="div">
-              {stats.percentage}%
-            </Typography>
-          </Box>
-        </Box>
-      </Paper>
-
-      <h2>Alertas</h2>
-
-      <ul style={{ listStyle: 'none', padding: 0 }}>
-        {results.map((res, i) => {
-          // Check if this alert has been omitted
-          const isOmitted = res.alerta.startsWith("Omitido:");
-          
-          // Extract original alert if omitted
-          let originalAlert = res.alerta;
-          let omitReason = "";
-          
-          if (isOmitted) {
-            const match = res.alerta.match(/Omitido: (.*) - \[(.*)\]/);
-            if (match) {
-              omitReason = match[1];
-              originalAlert = match[2];
-            }
-          }
-          
-          return (
-            <li 
-              key={i+1}
-              style={{
-                padding: '10px',
-                margin: '10px 0',
-                backgroundColor: isOmitted ? '#f0f0f0' : '#f5f5f5',
-                borderLeft: `4px solid ${isOmitted ? 'gray' : 'red'}`,
-                borderRadius: '4px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}
-            >
-              <div>
-                <strong>ID: {i+1}</strong><br/>
-                {isOmitted ? (
-                  <>
-                    <Typography sx={{ color: 'gray' }}>
-                      <strong>Motivo:</strong> {omitReason}
-                    </Typography>
-                    <Typography sx={{ textDecoration: 'line-through' }}>
-                      {originalAlert}
-                    </Typography>
-                  </>
-                ) : (
-                  res.alerta
-                )}
-              </div>
-              {!isOmitted && (
-                <Button 
-                  variant="outlined" 
-                  color="primary" 
-                  size="small"
-                  onClick={(e) => handleClick(e, res.id)}
-                >
-                  Omitir
-                </Button>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-
-      <Popover
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-      >
-        <Paper sx={{ width: 200, maxWidth: '100%' }}>
-          {!showOtherInput ? (
-            <List>
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => handleOptionSelect('Sin inventario')}>
-                  <ListItemText primary="Sin inventario" />
-                </ListItemButton>
-              </ListItem>
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => handleOptionSelect('Producto caducado')}>
-                  <ListItemText primary="Producto caducado" />
-                </ListItemButton>
-              </ListItem>
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => handleOptionSelect('Producto no existente')}>
-                  <ListItemText primary="Producto no existente" />
-                </ListItemButton>
-              </ListItem>
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => handleOptionSelect('Alerta errónea')}>
-                  <ListItemText primary="Alerta errónea" />
-                </ListItemButton>
-              </ListItem>
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => handleOptionSelect('Otro')}>
-                  <ListItemText primary="Otro" />
-                </ListItemButton>
-              </ListItem>
-            </List>
-          ) : (
-            <div style={{ padding: '10px' }}>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="reason"
-                label="Especifique"
-                type="text"
-                fullWidth
-                variant="outlined"
-                value={otherReason}
-                onChange={(e) => setOtherReason(e.target.value)}
+      
+      <StatsDisplay
+        total={stats.total}
+        good={stats.good}
+        percentage={stats.percentage}
+      />
+      
+      <div style={{ 
+        flex: 1,
+        overflow: 'auto',
+        marginBottom: '20px'
+      }}>
+        <Typography variant="h6" gutterBottom>
+          Alertas detectadas
+        </Typography>
+        
+        {results.length > 0 ? (
+          <ul style={{ listStyleType: 'none', padding: 0 }}>
+            {results.map((alert, index) => (
+              <AlertItem 
+                key={index}
+                alert={alert}
+                index={index}
+                onOmit={handleOmitClick}
               />
-              <Button 
-                onClick={handleOtherReasonSubmit}
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{ mt: 1 }}
-              >
-                Confirmar
-              </Button>
-            </div>
-          )}
-        </Paper>
-      </Popover>
-      <Divider sx={{ my: 2 }} />
-      <Box sx={{ mt: 'auto', pt: 2 }}>
-        <Stack direction="row" spacing={2}>
-          {/* Take New Picture Button */}
-          <Button 
-            variant="contained" 
-            color="secondary" 
-            size="large"
-            startIcon={<PhotoCameraIcon />}
-            onClick={onTakeNewPicture}
-            sx={{ py: 1.5, flexGrow: 1 }}
-          >
-            Tomar otra foto
-          </Button>
-          
-          {/* Back to Map Button */}
-          <Button 
-            variant="contained" 
-            color="primary" 
-            size="large"
-            startIcon={<MapIcon />}
-            onClick={onBackToMap}
-            sx={{ py: 1.5, flexGrow: 1 }}
-          >
-            Volver al mapa ({stats.percentage}% completado)
-          </Button>
-        </Stack>
-      </Box>
-    </div>
+            ))}
+          </ul>
+        ) : (
+          <Typography variant="body1">
+            No hay alertas para mostrar.
+          </Typography>
+        )}
+      </div>
+      
+      <ActionButtons
+        onBackToMap={onBackToMap}
+        onTakeNewPicture={onTakeNewPicture}
+        completionPercentage={stats.percentage}
+      />
+      
+      <OmitReasonPopover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={handleClosePopover}
+        onSelectReason={handleSelectReason}
+      />
+    </Paper>
   );
 };
 
