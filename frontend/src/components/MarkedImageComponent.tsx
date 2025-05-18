@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IconButton, Slider } from '@mui/material';
+import { IconButton, Slider, Box, Typography } from '@mui/material';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import type { ModelResult } from './UploadComponent';
@@ -35,11 +35,13 @@ const MarkedImageComponent: React.FC<MarkedImageComponentProps> = ({ imageSrc, r
       padding: '20px',
       boxSizing: 'border-box'
     }}>
-      <div style={{
+      <Box sx={{
         display: 'flex',
         gap: '10px',
         alignItems: 'center',
-        marginBottom: '10px'
+        marginBottom: '10px',
+        justifyContent: 'flex-end', // Align to the right
+        paddingRight: '10px'
       }}>
         <IconButton onClick={handleZoomOut} size="small">
           <ZoomOutIcon />
@@ -56,8 +58,10 @@ const MarkedImageComponent: React.FC<MarkedImageComponentProps> = ({ imageSrc, r
         <IconButton onClick={handleZoomIn} size="small">
           <ZoomInIcon />
         </IconButton>
-        <span>{Math.round(zoomLevel * 100)}%</span>
-      </div>
+        <Typography variant="body2" sx={{ minWidth: '40px' }}>
+          {Math.round(zoomLevel * 100)}%
+        </Typography>
+      </Box>
       
       <div style={{ 
         position: 'relative', 
