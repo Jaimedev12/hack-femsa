@@ -85,22 +85,13 @@ const AlertList: React.FC<AlertListProps> = ({
         percentage={stats.percentage}
       />
       
-      {/* Missing Products Section */}
+      {/* Header for Missing Products section */}
       {missingProducts.length > 0 && (
-        <Paper 
-          elevation={1} 
-          sx={{ 
-            p: 2, 
-            mb: 3, 
-            backgroundColor: theme.palette.error.light,
-            borderLeft: `6px solid ${theme.palette.error.main}`,
-            borderRadius: '8px'
-          }}
-        >
+        <>
           <Box sx={{ 
             display: 'flex', 
             alignItems: 'center', 
-            mb: 1.5 
+            mb: 1.5
           }}>
             <ErrorOutlineIcon 
               color="error" 
@@ -112,19 +103,33 @@ const AlertList: React.FC<AlertListProps> = ({
             </Typography>
           </Box>
           
-          {/* List of missing products */}
-          <Box sx={{ mb: 1 }}>
+          {/* Scrollable Missing Products container */}
+          <Paper 
+            elevation={1} 
+            sx={{ 
+              p: 2, 
+              mb: 2, 
+              backgroundColor: theme.palette.error.light,
+              borderLeft: `6px solid ${theme.palette.error.main}`,
+              borderRadius: '8px',
+              maxHeight: '25vh',
+              overflow: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1
+            }}
+          >
             {missingProducts.map((product) => (
               <Paper 
                 key={`missing-${product.id}`}
                 sx={{ 
                   p: 1.5, 
-                  mb: 1, 
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   backgroundColor: 'rgba(255,255,255,0.9)',
-                  borderRadius: '6px'
+                  borderRadius: '6px',
+                  minHeight: '48px'
                 }}
               >
                 <Typography fontWeight="500">
@@ -140,21 +145,25 @@ const AlertList: React.FC<AlertListProps> = ({
                 </Button>
               </Paper>
             ))}
-          </Box>
-        </Paper>
+          </Paper>
+        </>
       )}
       
-      <div style={{ 
+      <Typography variant="h6" gutterBottom>
+        Alertas detectadas
+      </Typography>
+      
+      {/* Scrollable Alerts container */}
+      <Box sx={{ 
         flex: 1,
         overflow: 'auto',
-        marginBottom: '20px'
+        mb: 2,
+        bgcolor: regularAlerts.length ? 'transparent' : theme.palette.background.paper,
+        borderRadius: 1,
+        p: regularAlerts.length ? 0 : 2,
       }}>
-        <Typography variant="h6" gutterBottom>
-          Alertas detectadas
-        </Typography>
-        
         {regularAlerts.length > 0 ? (
-          <ul style={{ listStyleType: 'none', padding: 0 }}>
+          <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
             {regularAlerts.map((alert, index) => (
               <AlertItem 
                 key={alert.id}
@@ -169,7 +178,7 @@ const AlertList: React.FC<AlertListProps> = ({
             No hay alertas adicionales para mostrar.
           </Typography>
         )}
-      </div>
+      </Box>
       
       <ActionButtons
         onBackToMap={onBackToMap}

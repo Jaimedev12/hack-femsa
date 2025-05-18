@@ -61,21 +61,25 @@ const MapComponent: React.FC<MapComponentProps> = ({
     { id: 'register-2', type: 'register', name: 'Caja 2', x: 5, y: 1, width: 2, height: 1, clickable: false },
     
     // Product segments - various sizes
-    { id: 'helados-1', type: 'segment', name: 'Helados 1', x: 1, y: 3, width: 1, height: 2, clickable: true },
-    { id: 'helados-2', type: 'segment', name: 'Helados 2', x: 1, y: 5, width: 1, height: 2, clickable: true },
-    { id: 'sabritas-1', type: 'segment', name: 'Sabritas 1', x: 3, y: 3, width: 1, height: 2, clickable: true },
-    { id: 'sabritas-2', type: 'segment', name: 'Sabritas 2', x: 3, y: 5, width: 1, height: 2, clickable: true },
-    { id: 'sabritas-3', type: 'segment', name: 'Sabritas 1', x: 5, y: 3, width: 1, height: 2, clickable: true },
-    { id: 'sabritas-4', type: 'segment', name: 'Sabritas 2', x: 5, y: 5, width: 1, height: 2, clickable: true },
-    { id: 'sabritas-5', type: 'segment', name: 'Sabritas 1', x: 7, y: 3, width: 1, height: 2, clickable: true },
-    { id: 'sabritas-6', type: 'segment', name: 'Sabritas 2', x: 7, y: 5, width: 1, height: 2, clickable: true },
-    { id: 'sabritas-7', type: 'segment', name: 'Sabritas 1', x: 9, y: 3, width: 1, height: 2, clickable: true },
-    { id: 'sabritas-8', type: 'segment', name: 'Sabritas 2', x: 9, y: 5, width: 1, height: 2, clickable: true },
-    { id: 'sabritas-9', type: 'segment', name: 'Sabritas 1', x: 9, y: 1, width: 1, height: 2, clickable: true },
-    { id: 'sabritas-10', type: 'segment', name: 'Refrescos 1', x: 2, y: 8, width: 2, height: 1, clickable: true },
-    { id: 'sabritas-11', type: 'segment', name: 'Refrescos 2', x: 4, y: 8, width: 2, height: 1, clickable: true },
-    { id: 'sabritas-12', type: 'segment', name: 'Refrescos 3', x: 6, y: 8, width: 2, height: 1, clickable: true },
-    { id: 'sabritas-13', type: 'segment', name: 'Refrescos 4', x: 8, y: 8, width: 2, height: 1, clickable: true },
+    { id: 'Helados 1', type: 'segment', name: 'Helados 1', x: 1, y: 3, width: 1, height: 2, clickable: true },
+    { id: 'Helados 2', type: 'segment', name: 'Helados 2', x: 1, y: 5, width: 1, height: 2, clickable: true },
+    { id: 'Sabritas 1', type: 'segment', name: 'Sabritas 1', x: 3, y: 3, width: 1, height: 2, clickable: true },
+    { id: 'Sabritas 2', type: 'segment', name: 'Sabritas 2', x: 3, y: 5, width: 1, height: 2, clickable: true },
+    { id: 'Galletas 1', type: 'segment', name: 'Galletas 1', x: 4, y: 3, width: 1, height: 2, clickable: true },
+    { id: 'Galletas 2', type: 'segment', name: 'Galletas 2', x: 4, y: 5, width: 1, height: 2, clickable: true },
+
+    { id: 'Alacena 1', type: 'segment', name: 'Alacena 1', x: 6, y: 3, width: 1, height: 2, clickable: true },
+    { id: 'Alacena 2', type: 'segment', name: 'Alacena 2', x: 6, y: 5, width: 1, height: 2, clickable: true },
+    { id: 'Hogar 1', type: 'segment', name: 'Hogar 1', x: 7, y: 3, width: 1, height: 2, clickable: true },
+    { id: 'Hogar 2', type: 'segment', name: 'Hogar 2', x: 7, y: 5, width: 1, height: 2, clickable: true },
+
+    { id: 'Alcohol', type: 'segment', name: 'Alcohol', x: 9, y: 3, width: 1, height: 2, clickable: true },
+    { id: 'Agua', type: 'segment', name: 'Agua', x: 9, y: 5, width: 1, height: 2, clickable: true },
+    { id: 'Comida', type: 'segment', name: 'Comida', x: 9, y: 1, width: 1, height: 2, clickable: true },
+    { id: 'Refrescos 1', type: 'segment', name: 'Refrescos 1', x: 2, y: 8, width: 2, height: 1, clickable: true },
+    { id: 'Refrescos 2', type: 'segment', name: 'Refrescos 2', x: 4, y: 8, width: 2, height: 1, clickable: true },
+    { id: 'Refrescos 3', type: 'segment', name: 'Refrescos 3', x: 6, y: 8, width: 2, height: 1, clickable: true },
+    { id: 'Refrescos 4', type: 'segment', name: 'Refrescos 4', x: 8, y: 8, width: 2, height: 1, clickable: true },
 
   ];
   
