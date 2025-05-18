@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper, Typography, Box, CircularProgress } from '@mui/material';
+import { Paper, Typography, Box, CircularProgress, useTheme } from '@mui/material';
 
 interface StatsDisplayProps {
   total: number;
@@ -8,11 +8,20 @@ interface StatsDisplayProps {
 }
 
 const StatsDisplay: React.FC<StatsDisplayProps> = ({ total, good, percentage }) => {
+  const theme = useTheme();
+  
+  // Get color from theme based on percentage
+  const getProgressColor = () => {
+    if (percentage < 40) return theme.palette.error.main;
+    if (percentage < 70) return theme.palette.warning.main;
+    return theme.palette.success.main;
+  };
+  
   return (
     <Paper 
-      elevation={3} 
+      elevation={2} 
       sx={{ 
-        p: 2, 
+        p: 3, 
         mb: 3, 
         display: 'flex', 
         justifyContent: 'space-between',
@@ -21,8 +30,8 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({ total, good, percentage }) 
       }}
     >
       <div>
-        <Typography variant="h6" sx={{ mb: 1 }}>Resumen de productos</Typography>
-        <Typography variant="body2">
+        <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold' }}>Resumen de productos</Typography>
+        <Typography variant="body1">
           Total: <strong>{total}</strong> | Alertas: <strong>{total - good}</strong>
         </Typography>
       </div>
@@ -32,11 +41,7 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({ total, good, percentage }) 
           value={percentage}
           size={100}
           thickness={5}
-          sx={{
-            color: percentage < 40 ? '#f44336' : 
-            percentage < 70 ? '#ff9800' : 
-            '#4caf50',
-          }}
+          sx={{ color: getProgressColor() }}
         />
         <Box
           sx={{
@@ -51,7 +56,7 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({ total, good, percentage }) 
             flexDirection: 'column'
           }}
         >
-          <Typography variant="h5" component="div">
+          <Typography variant="h5" component="div" fontWeight="bold">
             {percentage}%
           </Typography>
         </Box>

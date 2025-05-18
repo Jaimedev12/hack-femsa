@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { ThemeProvider, CssBaseline, AppBar, Toolbar, Typography } from '@mui/material';
+import theme from './theme';
 import MapComponent from './components/MapComponent';
 import UploadComponent from './components/UploadComponent';
 import ResultsComponent from './components/ResultsComponent';
@@ -19,12 +21,15 @@ const App: React.FC = () => {
   };
 
   const handleBackToMap = (segment: string, percentage: number) => {
-    // Determine color based on completion percentage
-    let color = '#f44336'; // Red for low completion
+    // Determine color based on completion percentage using theme colors
+    let color;
+    
     if (percentage >= 70) {
-      color = '#4caf50'; // Green for high completion
+      color = theme.palette.success.main; // Green for high completion
     } else if (percentage >= 40) {
-      color = '#ff9800'; // Orange for medium completion
+      color = theme.palette.warning.main; // Yellow for medium completion
+    } else {
+      color = theme.palette.error.main; // Red for low completion
     }
     
     // Update segment status
@@ -38,33 +43,52 @@ const App: React.FC = () => {
   };
 
   return (
-    <div style={{  
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      minWidth: '100vw',
-    }}>
-      {view === 'map' && (
-        <MapComponent 
-          setAppView={setView}
-          setImage={setImage}
-          setApiResult={setApiResult}
-          selectedSegment={selectedSegment}
-          setSelectedSegment={setSelectedSegment}
-          segmentStatus={segmentStatus}
-        />
-      )}
-      {view === 'upload' && <UploadComponent onComplete={handleUploadComplete} />}
-      {view === 'results' && apiResult && (
-        <ResultsComponent 
-          imageSrc={URL.createObjectURL(image as File)} 
-          results={apiResult} 
-          segment={selectedSegment || 'Unknown'}
-          onBackToMap={handleBackToMap}
-        />
-      )}
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        
+        <AppBar position="static" sx={{ minHeight: '10%' }}>
+          <Toolbar>
+            <img 
+              src="src/assets/oxxo_Logo.png" 
+              alt="OXXO Logo" 
+              style={{ height: '32px', marginRight: '12px' }} 
+            />
+            <Typography variant="h6">
+              Store Analysis Dashboard
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        
+        <div style={{  
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '90%',
+          flex: 1,
+        }}>
+          {view === 'map' && (
+            <MapComponent 
+              setAppView={setView}
+              setImage={setImage}
+              setApiResult={setApiResult}
+              selectedSegment={selectedSegment}
+              setSelectedSegment={setSelectedSegment}
+              segmentStatus={segmentStatus}
+            />
+          )}
+          {view === 'upload' && <UploadComponent onComplete={handleUploadComplete} />}
+          {view === 'results' && apiResult && (
+            <ResultsComponent 
+              imageSrc={URL.createObjectURL(image as File)} 
+              results={apiResult} 
+              segment={selectedSegment || 'Unknown'}
+              onBackToMap={handleBackToMap}
+            />
+          )}
+        </div>
+      </div>
+    </ThemeProvider>
   );
 };
 

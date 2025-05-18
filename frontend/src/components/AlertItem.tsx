@@ -1,6 +1,7 @@
 import React from 'react';
-import { Button, Typography, Paper } from '@mui/material';
+import { Button, Typography, useTheme } from '@mui/material';
 import type { ModelResult } from './UploadComponent';
+
 interface AlertItemProps {
   alert: ModelResult;
   index: number;
@@ -8,6 +9,7 @@ interface AlertItemProps {
 }
 
 const AlertItem: React.FC<AlertItemProps> = ({ alert, index, onOmit }) => {
+  const theme = useTheme();
   // Check if this alert has been omitted
   const isOmitted = alert.alerta.startsWith("Omitido:");
   
@@ -26,21 +28,26 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert, index, onOmit }) => {
   return (
     <li 
       style={{
-        padding: '10px',
-        margin: '10px 0',
-        backgroundColor: isOmitted ? '#f0f0f0' : '#f5f5f5',
-        borderLeft: `4px solid ${isOmitted ? 'gray' : 'red'}`,
-        borderRadius: '4px',
+        padding: '16px',
+        margin: '12px 0',
+        backgroundColor: isOmitted 
+          ? theme.palette.background.paper
+          : theme.palette.background.default,
+        borderLeft: `4px solid ${isOmitted 
+          ? theme.palette.text.secondary 
+          : theme.palette.error.main}`,
+        borderRadius: 8,
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
       }}
     >
       <div>
-        <strong>ID: {index+1}</strong><br/>
+        <Typography variant="subtitle1" fontWeight="bold">ID: {index+1}</Typography>
         {isOmitted ? (
           <>
-            <Typography sx={{ color: 'gray' }}>
+            <Typography sx={{ color: theme.palette.text.secondary }}>
               <strong>Motivo:</strong> {omitReason}
             </Typography>
             <Typography sx={{ textDecoration: 'line-through' }}>
@@ -48,15 +55,16 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert, index, onOmit }) => {
             </Typography>
           </>
         ) : (
-          alert.alerta
+          <Typography>{alert.alerta}</Typography>
         )}
       </div>
       {!isOmitted && (
         <Button 
-          variant="outlined" 
-          color="primary" 
+          variant="contained" 
+          color="error" 
           size="small"
           onClick={(e) => onOmit(e, alert.id)}
+          sx={{ minWidth: '80px' }}
         >
           Omitir
         </Button>

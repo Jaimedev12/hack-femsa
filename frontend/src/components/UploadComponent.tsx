@@ -80,6 +80,12 @@ const UploadComponent: React.FC<UploadComponentProps> = ({ onComplete }) => {
           nombre: "Shampoo KleenBebe Manzanilla 250ml",
           bbox: [130, 130, 160, 160],
           alerta: "Producto correcto"
+        },
+        {
+          id: 4,
+          nombre: "Shampoo KleenBebe Manzanilla 250ml",
+          bbox: [130, 130, 160, 160],
+          alerta: "Producto faltante"
         }
       ];
 
