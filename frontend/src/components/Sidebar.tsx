@@ -4,15 +4,9 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useTheme } from '@mui/material/styles';
 
-interface SidebarProps {
-  currentView: 'map' | 'upload' | 'loading' | 'results';
-  onNavigate: (view: 'map' | 'upload' | 'loading' | 'results') => void;
-}
+interface SidebarProps {}
 
-const Sidebar: React.FC<SidebarProps> = ({ 
-  currentView,
-  onNavigate 
-}) => {
+const Sidebar: React.FC<SidebarProps> = () => {
   const theme = useTheme();
   
   return (

@@ -1,5 +1,5 @@
 from get_predictions import get_predictions
-from get_cluster_dataframe import get_cluster_dataframe
+from get_alarms import get_alarms
 import pandas as pd
 
 def main():
@@ -14,7 +14,8 @@ def main():
     locations_df["nombre_normalizado"] = locations_df["Nombre"].str.strip().str.lower()
     
     # Process predictions and get alarms
-    cluster_df = get_cluster_dataframe(predictions, locations_df)
+    alarms = get_alarms(predictions, locations_df)
+    print(alarms)
 
 
 if __name__ == "__main__":

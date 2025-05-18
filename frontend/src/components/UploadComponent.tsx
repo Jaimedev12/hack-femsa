@@ -55,11 +55,14 @@ const UploadComponent: React.FC<UploadComponentProps> = ({ onComplete }) => {
     formData.append('image', fileToUpload);
 
     try {
-      // const response = await axios.post('http://localhost:5000/upload', formData, {
-      //   headers: { 'Content-Type': 'multipart/form-data' },
-      // });
+      await axios.post('http://localhost:5000/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
 
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate a delay for loading
+      const response = await axios.get('http://localhost:5000/get_alarms', {});
+      console.log(response.data.alarms);
+    
+      // await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate a delay for loading
       setLoading(false);
 
       const fakeResponse: ModelResult[] =[{'id': 1,
@@ -193,148 +196,25 @@ const UploadComponent: React.FC<UploadComponentProps> = ({ onComplete }) => {
 
       // const fakeResponse: ModelResult[] = [
       //   {
-      //     id: 1,
-      //     nombre: "AGUA ALCALINA VITAWA 1LT",
-      //     bbox: [458.85, 371.14, 666.40, 963.93],
-      //     alerta: "Producto correcto"
-      //   },
-      //   {
-      //     id: 2,
-      //     nombre: "DETERGENTE AZALEA MULTIUSOS 800G",
-      //     bbox: [103.23, 2351.51, 531.72, 2436.09],
-      //     alerta: "Producto correcto"
-      //   },
-      //   {
-      //     id: 3,
-      //     nombre: "AGUA ALCALINA VITAWA 1LT",
-      //     bbox: [1072.36, 361.32, 1259.42, 959.10],
-      //     alerta: "Producto correcto"
-      //   },
-      //   {
-      //     id: 4,
-      //     nombre: "AGUA ALCALINA VITAWA 1LT",
-      //     bbox: [669.96, 292.14, 898.35, 966.63],
-      //     alerta: "Producto correcto"
-      //   },
-      //   {
-      //     id: 5,
-      //     nombre: "Panales Tikytin 14pz T5",
-      //     bbox: [924.08, 1123.69, 1265.02, 1665.42],
-      //     alerta: "Producto correcto"
-      //   },
-      //   {
-      //     id: 6,
-      //     nombre: "AGUA ALCALINA VITAWA 1LT",
-      //     bbox: [881.27, 364.79, 1075.76, 960.12],
-      //     alerta: "Producto mal acomodado"
-      //   },
-      //   {
-      //     id: 7,
-      //     nombre: "DETERGENTE AZALEA MULTIUSOS 800G",
-      //     bbox: [162.28, 2225.16, 582.93, 2324.78],
-      //     alerta: "Producto mal acomodado"
-      //   },
-      //   {
-      //     id: 8,
-      //     nombre: "Shampoo KleenBebe Manzanilla 250ml",
-      //     bbox: [296.09, 1279.95, 423.64, 1696.79],
-      //     alerta: "Producto mal acomodado"
-      //   },
-      //   {
-      //     id: 9,
-      //     nombre: "NAN 1 OPTIPRO Formula Infantil 12x400gMX",
-      //     bbox: [1999.35, 1342.34, 2245.11, 1667.92],
-      //     alerta: "Producto mal acomodado"
-      //   },
-      //   {
-      //     id: 10,
-      //     nombre: "Panales Tikytin 14pz T5",
-      //     bbox: [1266.10, 1133.66, 1584.44, 1668.34],
-      //     alerta: "Producto mal acomodado"
-      //   },
-      //   {
-      //     id: 11,
-      //     nombre: "Panales Tikytin 14pz T5",
-      //     bbox: [539.62, 1213.93, 851.47, 1673.29],
-      //     alerta: "Producto mal acomodado"
-      //   },
-      //   {
-      //     id: 12,
-      //     nombre: "PAPEL HIGIENICO AZALEA 4 ROLLOS 350 HOJAS",
-      //     bbox: [590.21, 1967.93, 1045.48, 2418.35],
-      //     alerta: "Producto mal acomodado"
-      //   },
-      //   {
-      //     id: 13,
-      //     nombre: "NAN 1 OPTIPRO Formula Infantil 12x400gMX",
-      //     bbox: [1763.24, 1342.70, 1991.45, 1666.97],
-      //     alerta: "Producto mal acomodado"
-      //   },
-      //   {
-      //     id: 14,
-      //     nombre: "DETERGENTE AZALEA MULTIUSOS 800G",
-      //     bbox: [206.09, 1941.73, 605.59, 2232.78],
-      //     alerta: "Producto mal acomodado"
-      //   },
-      //   {
-      //     id: 15,
-      //     nombre: "Panales Tikytin 14pz T4",
-      //     bbox: [],
-      //     alerta: "Producto faltante"
-      //   },
-      //   {
-      //     id: 16,
-      //     nombre: "AGUA ALCALINA VITAWA 1LT",
-      //     bbox: [],
-      //     alerta: "Producto faltante"
-      //   },
-      //   {
-      //     id: 17,
-      //     nombre: "DETERGENTE AZALEA MULTIUSOS 800G",
-      //     bbox: [],
-      //     alerta: "Producto faltante"
-      //   },
-      //   {
-      //     id: 18,
-      //     nombre: "NAN 1 OPTIPRO Formula Infantil 12x400gMX",
-      //     bbox: [],
-      //     alerta: "Producto faltante"
-      //   },
-      //   {
-      //     id: 19,
-      //     nombre: "NAN 2 OPTIPRO Formula Infantil 12x400gMX",
-      //     bbox: [],
-      //     alerta: "Producto faltante"
-      //   },
-      //   {
-      //     id: 20,
-      //     nombre: "Papel Regio Rinde 4pz",
-      //     bbox: [],
-      //     alerta: "Producto faltante"
-      //   }
-      // ];
-
-      // const fakeResponse: ModelResult[] = [
-      //   {
-      //     id: 1,
+      //     id: "1",
       //     nombre: "Papel Regio Rinde 4pz",
       //     bbox: [30, 30, 60, 60],
       //     alerta: "Producto mal acomodado"
       //   },
       //   {
-      //     id: 2,
+      //     id: "2",
       //     nombre: "Shampoo KleenBebe Manzanilla 250ml",
       //     bbox: [],
       //     alerta: "Producto faltante"
       //   },
       //   {
-      //     id: 3,
+      //     id: "3",
       //     nombre: "Shampoo KleenBebe Manzanilla 250ml",
       //     bbox: [130, 130, 160, 160],
       //     alerta: "Producto correcto"
       //   },
       //   {
-      //     id: 4,
+      //     id: "4",
       //     nombre: "Shampoo KleenBebe Manzanilla 250ml",
       //     bbox: [],
       //     alerta: "Producto faltante"

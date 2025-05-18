@@ -23,7 +23,7 @@ def get_predictions(image_path: str, confidence: float) -> List[Prediction]:
         parameters={
             "confidence": confidence,
         },
-        use_cache=True # cache workflow definition for 15 minutes
+        use_cache=False # cache workflow definition for 15 minutes
     )
 
 
