@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Typography, Paper } from '@mui/material';
+import { Button, Typography, Paper, Chip, Stack, Divider, Box, useTheme } from '@mui/material';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import type { ModelResult } from './UploadComponent';
 import StatsDisplay from './StatsDisplay';
 import ActionButtons from './ActionButtons';
@@ -27,9 +28,22 @@ const AlertList: React.FC<AlertListProps> = ({
   segment,
   stats
 }) => {
+  const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [selectedAlertId, setSelectedAlertId] = useState<number | null>(null);
 
+  // Filter alerts
+  const missingProducts = results.filter(
+    alert => alert.alerta === "Producto faltante" && 
+             !alert.alerta.startsWith("Omitido:") // Don't include already omitted items
+  );
+  
+  // Filter to exclude "Producto faltante" from the main list
+  const regularAlerts = results.filter(
+    alert => alert.alerta !== "Producto faltante" || 
+             alert.alerta.startsWith("Omitido:") // Keep omitted missing products in the main list
+  );
+  
   const handleOmitClick = (event: React.MouseEvent<HTMLButtonElement>, id: number) => {
     setAnchorEl(event.currentTarget);
     setSelectedAlertId(id);
@@ -71,6 +85,65 @@ const AlertList: React.FC<AlertListProps> = ({
         percentage={stats.percentage}
       />
       
+      {/* Missing Products Section */}
+      {missingProducts.length > 0 && (
+        <Paper 
+          elevation={1} 
+          sx={{ 
+            p: 2, 
+            mb: 3, 
+            backgroundColor: theme.palette.error.light,
+            borderLeft: `6px solid ${theme.palette.error.main}`,
+            borderRadius: '8px'
+          }}
+        >
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            mb: 1.5 
+          }}>
+            <ErrorOutlineIcon 
+              color="error" 
+              fontSize="medium" 
+              sx={{ mr: 1 }} 
+            />
+            <Typography variant="subtitle1" fontWeight="bold">
+              Productos faltantes ({missingProducts.length})
+            </Typography>
+          </Box>
+          
+          {/* List of missing products */}
+          <Box sx={{ mb: 1 }}>
+            {missingProducts.map((product) => (
+              <Paper 
+                key={`missing-${product.id}`}
+                sx={{ 
+                  p: 1.5, 
+                  mb: 1, 
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(255,255,255,0.9)',
+                  borderRadius: '6px'
+                }}
+              >
+                <Typography fontWeight="500">
+                  {product.nombre}
+                </Typography>
+                <Button 
+                  variant="outlined" 
+                  color="error" 
+                  size="small"
+                  onClick={(e) => handleOmitClick(e, product.id)}
+                >
+                  Omitir
+                </Button>
+              </Paper>
+            ))}
+          </Box>
+        </Paper>
+      )}
+      
       <div style={{ 
         flex: 1,
         overflow: 'auto',
@@ -80,11 +153,11 @@ const AlertList: React.FC<AlertListProps> = ({
           Alertas detectadas
         </Typography>
         
-        {results.length > 0 ? (
+        {regularAlerts.length > 0 ? (
           <ul style={{ listStyleType: 'none', padding: 0 }}>
-            {results.map((alert, index) => (
+            {regularAlerts.map((alert, index) => (
               <AlertItem 
-                key={index}
+                key={alert.id}
                 alert={alert}
                 index={index}
                 onOmit={handleOmitClick}
@@ -93,7 +166,7 @@ const AlertList: React.FC<AlertListProps> = ({
           </ul>
         ) : (
           <Typography variant="body1">
-            No hay alertas para mostrar.
+            No hay alertas adicionales para mostrar.
           </Typography>
         )}
       </div>

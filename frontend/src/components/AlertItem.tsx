@@ -45,6 +45,10 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert, index, onOmit }) => {
     >
       <div>
         <Typography variant="subtitle1" fontWeight="bold">ID: {index+1}</Typography>
+        <Typography variant="subtitle2" fontWeight="medium" sx={{ mb: 1 }}>
+          {alert.nombre}
+        </Typography>
+        
         {isOmitted ? (
           <>
             <Typography sx={{ color: theme.palette.text.secondary }}>

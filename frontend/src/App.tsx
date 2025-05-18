@@ -24,7 +24,7 @@ const App: React.FC = () => {
     // Determine color based on completion percentage using theme colors
     let color;
     
-    if (percentage >= 70) {
+    if (percentage >= 90) {
       color = theme.palette.success.main; // Green for high completion
     } else if (percentage >= 40) {
       color = theme.palette.warning.main; // Yellow for medium completion

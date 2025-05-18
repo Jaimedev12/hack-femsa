@@ -13,7 +13,7 @@ const StatsDisplay: React.FC<StatsDisplayProps> = ({ total, good, percentage }) 
   // Get color from theme based on percentage
   const getProgressColor = () => {
     if (percentage < 40) return theme.palette.error.main;
-    if (percentage < 70) return theme.palette.warning.main;
+    if (percentage < 90) return theme.palette.warning.main;
     return theme.palette.success.main;
   };
   

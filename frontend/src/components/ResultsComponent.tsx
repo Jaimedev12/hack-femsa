@@ -25,6 +25,7 @@ const ResultsComponent: React.FC<ResultsComponentProps> = ({
   
   // Filter out "Producto correcto" results for the alert list
   const filteredAlerts = results.filter(res => (res.alerta !== "Producto correcto"));
+  const filteredAlertsForImage = filteredAlerts.filter(res => (!res.alerta.includes("Producto faltante")));
   
   // Calculate statistics
   const totalAlerts = results.length;
@@ -78,8 +79,8 @@ const ResultsComponent: React.FC<ResultsComponentProps> = ({
       overflow: 'hidden'
     }}>
       {/* Use MarkedImageComponent with current image */}
-      <MarkedImageComponent imageSrc={currentImageSrc} results={filteredAlerts} />
-      
+      <MarkedImageComponent imageSrc={currentImageSrc} results={filteredAlertsForImage} />
+
       {/* Pass all handlers to AlertList */}
       <AlertList 
         results={filteredAlerts} 

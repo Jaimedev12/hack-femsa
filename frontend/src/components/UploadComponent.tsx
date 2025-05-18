@@ -7,7 +7,7 @@ interface UploadComponentProps {
 }
 
 export interface ModelResult {
-  id: number;
+  id: string;
   nombre: string;
   bbox: number[];
   alerta: string;
@@ -72,7 +72,7 @@ const UploadComponent: React.FC<UploadComponentProps> = ({ onComplete }) => {
         {
           id: 2,
           nombre: "Shampoo KleenBebe Manzanilla 250ml",
-          bbox: [80, 80, 110, 110],
+          bbox: [],
           alerta: "Producto faltante"
         },
         {
@@ -84,7 +84,7 @@ const UploadComponent: React.FC<UploadComponentProps> = ({ onComplete }) => {
         {
           id: 4,
           nombre: "Shampoo KleenBebe Manzanilla 250ml",
-          bbox: [130, 130, 160, 160],
+          bbox: [],
           alerta: "Producto faltante"
         }
       ];
