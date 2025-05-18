@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { Modal, Box } from '@mui/material';
 import AlertList from './AlertList';
 import MarkedImageComponent from './MarkedImageComponent';
+import UploadComponent from './UploadComponent';
 import type { ModelResult } from './UploadComponent';
 
 interface ResultsComponentProps {
@@ -18,6 +20,8 @@ const ResultsComponent: React.FC<ResultsComponentProps> = ({
 }) => {
   // Maintain results as component state so we can update it
   const [results, setResults] = useState<ModelResult[]>(initialResults);
+  const [currentImageSrc, setCurrentImageSrc] = useState<string>(imageSrc);
+  const [uploadModalOpen, setUploadModalOpen] = useState<boolean>(false);
   
   // Filter out "Producto correcto" results for the alert list
   const filteredAlerts = results.filter(res => (res.alerta !== "Producto correcto"));
@@ -42,6 +46,30 @@ const ResultsComponent: React.FC<ResultsComponentProps> = ({
     onBackToMap(segment, donePercentage);
   };
   
+  // Handle taking a new picture
+  const handleTakeNewPicture = () => {
+    setUploadModalOpen(true);
+  };
+  
+  // Handle the completion of the new image upload
+  const handleUploadComplete = ({ result, image }: { result: ModelResult[], image: File }) => {
+    setResults(result);
+    setCurrentImageSrc(URL.createObjectURL(image));
+    setUploadModalOpen(false);
+  };
+  
+  const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
+  
   return (
     <div style={{ 
       display: 'flex', 
@@ -49,14 +77,15 @@ const ResultsComponent: React.FC<ResultsComponentProps> = ({
       height: '100vh',
       overflow: 'hidden'
     }}>
-      {/* Use the new MarkedImageComponent */}
-      <MarkedImageComponent imageSrc={imageSrc} results={filteredAlerts} />
+      {/* Use MarkedImageComponent with current image */}
+      <MarkedImageComponent imageSrc={currentImageSrc} results={filteredAlerts} />
       
-      {/* Pass the update function and statistics to AlertList */}
+      {/* Pass all handlers to AlertList */}
       <AlertList 
         results={filteredAlerts} 
         onAlertUpdate={handleAlertUpdate}
         onBackToMap={handleBackToMap}
+        onTakeNewPicture={handleTakeNewPicture}
         segment={segment}
         stats={{
           total: totalAlerts,
@@ -64,6 +93,18 @@ const ResultsComponent: React.FC<ResultsComponentProps> = ({
           percentage: donePercentage
         }}
       />
+      
+      {/* Modal for uploading a new image */}
+      <Modal
+        open={uploadModalOpen}
+        onClose={() => setUploadModalOpen(false)}
+        aria-labelledby="upload-modal-title"
+      >
+        <Box sx={modalStyle}>
+          <h2 id="upload-modal-title">Tomar nueva foto del segmento {segment}</h2>
+          <UploadComponent onComplete={handleUploadComplete} />
+        </Box>
+      </Modal>
     </div>
   );
 };

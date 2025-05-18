@@ -11,15 +11,18 @@ import {
   Typography,
   Box,
   CircularProgress,
-  Divider
+  Divider,
+  Stack
 } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import type { ModelResult } from './UploadComponent';
 
 interface AlertListProps {
   results: ModelResult[];
   onAlertUpdate: (id: number, newAlertStatus: string) => void;
   onBackToMap: () => void;
+  onTakeNewPicture: () => void;  // New prop for handling new picture
   segment: string;
   stats: {
     total: number;
@@ -27,10 +30,12 @@ interface AlertListProps {
     percentage: number;
   };
 }
+
 const AlertList: React.FC<AlertListProps> = ({ 
   results, 
   onAlertUpdate, 
   onBackToMap,
+  onTakeNewPicture,  // Add the new handler
   segment, 
   stats 
 }) => {
@@ -280,17 +285,31 @@ const AlertList: React.FC<AlertListProps> = ({
       </Popover>
       <Divider sx={{ my: 2 }} />
       <Box sx={{ mt: 'auto', pt: 2 }}>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          fullWidth
-          size="large"
-          startIcon={<MapIcon />}
-          onClick={onBackToMap}
-          sx={{ py: 1.5 }}
-        >
-          Volver al mapa ({stats.percentage}% completado)
-        </Button>
+        <Stack direction="row" spacing={2}>
+          {/* Take New Picture Button */}
+          <Button 
+            variant="contained" 
+            color="secondary" 
+            size="large"
+            startIcon={<PhotoCameraIcon />}
+            onClick={onTakeNewPicture}
+            sx={{ py: 1.5, flexGrow: 1 }}
+          >
+            Tomar otra foto
+          </Button>
+          
+          {/* Back to Map Button */}
+          <Button 
+            variant="contained" 
+            color="primary" 
+            size="large"
+            startIcon={<MapIcon />}
+            onClick={onBackToMap}
+            sx={{ py: 1.5, flexGrow: 1 }}
+          >
+            Volver al mapa ({stats.percentage}% completado)
+          </Button>
+        </Stack>
       </Box>
     </div>
   );
