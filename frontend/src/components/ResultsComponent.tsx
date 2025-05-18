@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AlertList from './AlertList';
 import MarkedImageComponent from './MarkedImageComponent';
 import type { ModelResult } from './UploadComponent';
@@ -10,6 +10,12 @@ const ResultsComponent: React.FC<{ imageSrc: string; results: ModelResult[] }> =
   // Filter out "Producto correcto" results for the alert list
   const filteredAlerts = results.filter(res => (res.alerta !== "Producto correcto"));
   
+  // Calculate statistics
+  const totalAlerts = results.length;
+  const badAlerts = filteredAlerts.filter(res => !res.alerta.startsWith("Omitido:")).length;
+  const goodAlerts = totalAlerts - badAlerts;
+  const donePercentage = badAlerts == 0 ? 100 : Math.round((goodAlerts / totalAlerts) * 100);
+
   // Function to update an alert's status
   const handleAlertUpdate = (id: number, newAlertStatus: string) => {
     setResults(prevResults => 
@@ -29,10 +35,15 @@ const ResultsComponent: React.FC<{ imageSrc: string; results: ModelResult[] }> =
       {/* Use the new MarkedImageComponent */}
       <MarkedImageComponent imageSrc={imageSrc} results={filteredAlerts} />
       
-      {/* Pass the update function to AlertList */}
+      {/* Pass the update function and statistics to AlertList */}
       <AlertList 
         results={filteredAlerts} 
         onAlertUpdate={handleAlertUpdate}
+        stats={{
+          total: totalAlerts,
+          good: goodAlerts,
+          percentage: donePercentage
+        }}
       />
     </div>
   );
