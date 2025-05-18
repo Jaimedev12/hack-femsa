@@ -77,27 +77,32 @@ const MarkedImageComponent: React.FC<MarkedImageComponentProps> = ({ imageSrc, r
           onLoad={() => setImageLoaded(true)}
         />
         {/* Show all results in the image view */}
-        {imageLoaded && results.map((res, i) => (
-          <div
-            key={i+1}
-            style={{
-              position: 'absolute',
-              left: res.bbox[0],
-              top: res.bbox[1],
-              width: res.bbox[2] - res.bbox[0],
-              height: res.bbox[3] - res.bbox[1],
-              border: '2px solid red',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              backgroundColor: 'rgba(255,0,0,0.5)',
-              fontSize: '12px',
-            }}
-          >
-            {i+1}
-          </div>
-        ))}
+        {imageLoaded && results.map((res, i) => {
+          // Check if this alert has been omitted
+          const isOmitted = res.alerta.startsWith("Omitido:");
+          
+          return (
+            <div
+              key={i+1}
+              style={{
+                position: 'absolute',
+                left: res.bbox[0],
+                top: res.bbox[1],
+                width: res.bbox[2] - res.bbox[0],
+                height: res.bbox[3] - res.bbox[1],
+                border: `2px solid ${isOmitted ? '#888888' : 'red'}`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                backgroundColor: isOmitted ? 'rgba(136, 136, 136, 0.3)' : 'rgba(255, 0, 0, 0.5)',
+                fontSize: '12px',
+              }}
+            >
+              {i+1}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
